@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bluetooth Printer Test</title>
+</head>
+<body>
+    <h2>Test Bluetooth Printer</h2>
+    <button onclick="connectToPrinter()">Connect & Print</button>
+
+    <script>
+        async function connectToPrinter() {
+            try {
+                // Step 1: Request a Bluetooth device (printer)
+                const device = await navigator.bluetooth.requestDevice({
+                    acceptAllDevices: true, // Allow any printer
+                    optionalServices: ['battery_service'] // Replace with actual printer service UUID if known
+                });
+
+                console.log("Connected to:", device.name);
+
+                // Step 2: Connect to the printer's GATT server
+                const server = await device.gatt.connect();
+
+                // Step 3: Get the primary service (Update this based on the printer's specs)
+                const service = await server.getPrimaryService('battery_service');
+                const characteristic = await service.getCharacteristic('battery_level'); 
+
+                // Step 4: Prepare a print command (ESC/POS or plain text)
+                const printCommand = new TextEncoder().encode("Hello, Kitchen Order Ticket!\n\n");
+
+                // Step 5: Send print data
+                await characteristic.writeValue(printCommand);
+
+                alert("Print job sent!");
+            } catch (error) {
+                console.error("Bluetooth Print Error:", error);
+                alert("Failed to connect to printer.");
+            }
+        }
+    </script>
+</body>
+</html>
