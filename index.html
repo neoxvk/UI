@@ -12,6 +12,23 @@
     <script>
         async function connectToPrinter() {
             try {
+
+                const order = {
+                    id: "ORD12345",
+                    createdAt: new Date(),
+                    orderItems: ["Burger x1", "Fries x2", "Coke x1"]
+                };
+
+                const textReceipt = `
+KOT - HyperApps
+========================
+Order ID: ${order.id}
+Time: ${new Date(order.createdAt).toLocaleString()}
+------------------------
+${order.orderItems.join("\n")}
+------------------------
+   Thank you!   
+`;
                 // Step 1: Request a Bluetooth device (printer)
                 const device = await navigator.bluetooth.requestDevice({
                     acceptAllDevices: true, // Allow any printer
